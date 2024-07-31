@@ -1,5 +1,5 @@
 
-const url = 'http://localhost:8080'
+const url = 'http://backend:8080'
 import { validateResponse } from "@/network/fetch";
 
 exports.signIn = async ({ email, password }) => {
