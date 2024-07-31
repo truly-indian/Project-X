@@ -9,7 +9,6 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-
 # Use nginx to serve the static files
 FROM nginx:alpine
 RUN rm -rf /usr/share/nginx/html/*
