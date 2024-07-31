@@ -18,6 +18,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 
+app.get('/health', (req, res) => {
+    res.status(200).json({message: 'server up and running'})
+})
+
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/orders', orderRoutes);
 
