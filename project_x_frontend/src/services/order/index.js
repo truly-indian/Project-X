@@ -1,4 +1,4 @@
-const url = 'http://backend:8080'
+const url = 'https://backend:8080'
 import { validateResponse } from "@/network/fetch";
 
 exports.fetchOrders = async () => {
