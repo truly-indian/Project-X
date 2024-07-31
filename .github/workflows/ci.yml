@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  backend:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install backend dependencies
+      working-directory: ./backend
+      run: npm install
+
+  frontend:
+    runs-on: self-hosted
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install frontend dependencies
+      working-directory: ./project_x_frontend
+      run: npm install
+
+    - name: Build frontend
+      working-directory: ./project_x_frontend
+      run: npm run build
