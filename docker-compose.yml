@@ -11,8 +11,6 @@ services:
       - ./backend/.env  
     environment:
       NODE_ENV: production
-    depends_on:
-      - frontend
 
   nginx:
     build:
