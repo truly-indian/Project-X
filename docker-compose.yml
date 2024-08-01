@@ -24,8 +24,8 @@ services:
       - backend
     restart: always
     volumes:
-      - /etc/letsencrypt/live/starevents.online-0001/fullchain.pem:/etc/letsencrypt/live/starevents.online-0001/fullchain.pem
-      - /etc/letsencrypt/live/starevents.online-0001/privkey.pem:/etc/letsencrypt/live/starevents.online-0001/privkey.pem
+      - /etc/letsencrypt/live/backend.starevents.online/fullchain.pem:/etc/letsencrypt/live/backend.starevents.online/fullchain.pem
+      - /etc/letsencrypt/live/backend.starevents.online/privkey.pem:/etc/letsencrypt/live/backend.starevents.online/privkey.pem
 
 
 
