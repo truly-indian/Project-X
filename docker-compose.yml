@@ -14,27 +14,16 @@ services:
     depends_on:
       - frontend
 
-  frontend:
+  nginx:
     build:
-      context: ./project_x_frontend
+      context: ./nginx
       dockerfile: Dockerfile
-    image: jatboy/project-x:frontend-latest
+    image: jatboy/project-x:nginx-latest
     ports:
-      - "3000:80"
-      - "8443:443"
-    volumes: 
-      - /etc/letsencrypt/live/www.starevents.online/fullchain.pem:/etc/letsencrypt/live/www.starevents.online/fullchain.pem
-      - /etc/letsencrypt/live/www.starevents.online/privkey.pem:/etc/letsencrypt/live/www.starevents.online/privkey.pem 
-  # reverse-proxy:
-  #   image: nginx:alpine
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   volumes:
-  #     - ./project_x_frontend/nginx.conf:/etc/nginx/nginx.conf
-  #     - /etc/letsencrypt/live/www.starevents.online/:/etc/letsencrypt/live/www.starevents.online/
-  #   depends_on:
-  #     - frontend
-  #     - backend    
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
+
 
 
