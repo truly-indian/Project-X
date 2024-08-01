@@ -26,7 +26,6 @@ router.post('/sign_up', async (req, res) => {
 
 router.post('/sign_in', async (req,res) => {
     try {
-        console.log('req: ', req.body)
         const body = req.body;
         const resp = await SignIn(body);
         const token = jwt.sign({email: resp.email}, "secret_key", {expiresIn: '1h'} )

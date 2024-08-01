@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next export"
+    "export": "APP_ENV=production next export"
   },
   "dependencies": {
     "@emotion/core": "^11.0.0",

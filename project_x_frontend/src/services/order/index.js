@@ -1,5 +1,7 @@
-const url = 'https://backend.starevents.online'
+import { environment } from "@/environments";
 import { validateResponse } from "@/network/fetch";
+
+const url = environment.server;
 
 exports.fetchOrders = async () => {
     try {
