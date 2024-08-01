@@ -29,6 +29,6 @@ app.use('/api/v1/orders', orderRoutes);
 const PORT = process.env.PORT || '8080';
 
 
-app.listen(PORT, 'localhost', () => {
+app.listen(PORT, () => {
     console.log('app started at port 8080')
 });
