@@ -1,4 +1,4 @@
-name: CI
+name: project-x-ci-cd
 
 on:
   push:

@@ -1,4 +1,4 @@
-const url = 'https://www.starevents.online'
+const url = 'http://backend.starevents.online:8080'
 import { validateResponse } from "@/network/fetch";
 
 exports.fetchOrders = async () => {
