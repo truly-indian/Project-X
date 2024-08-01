@@ -22,6 +22,9 @@ services:
     depends_on:
       - backend
     restart: always
+    volumes:
+      - /etc/letsencrypt/live/www.starevents.online/fullchain.pem:/etc/letsencrypt/live/www.starevents.online/fullchain.pem
+      - /etc/letsencrypt/live/www.starevents.online/privkey.pem:/etc/letsencrypt/live/www.starevents.online/privkey.pem 
 
 
 
