@@ -1,11 +1,25 @@
-const { FetchOrders } = require('./repository');
+const { FetchOrders, FetchOrderById } = require('./repository');
 
-exports.FetchOrders = async () => {
+exports.FetchOrders = async (params) => {
     try {
-        const orders = await FetchOrders();
+        const from = params['from'];
+        const limit = params['limit'];
+        const orders = await FetchOrders(from, limit);
         return orders;
     } catch (error) {
         console.log('error while fetching orders: ', error);
         throw error;
     }
 };
+
+exports.FetchOrderById = async (params) => {
+    try {
+        const _id = params['_id'];
+        const orders = await FetchOrderById(_id);
+        return orders;
+    } catch (error) {
+        console.log('error while fetching order by id: ', error);
+        throw error;
+    }
+};
+

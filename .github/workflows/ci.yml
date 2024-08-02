@@ -22,7 +22,9 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }} 
 
     - name: Creating .env file
-      run: echo "DB_URI=${{ secrets.DB_URI }}" > ./backend/.env      
+      run: |
+        echo "DB_URI=${{ secrets.DB_URI }}" > ./backend/.env
+        echo "MAPS_JAVASCRIPT_API_KEY=${{ secrets.MAPS_JAVASCRIPT_API_KEY }}" >> ./backend/.env
 
     - name: Building and Starting Services
       run: docker-compose up --build -d
