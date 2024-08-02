@@ -1,0 +1,1 @@
+exports.GoogleEmbedUrl = 'https://www.google.com/maps/embed/v1/directions?origin='

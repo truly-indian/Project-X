@@ -10,7 +10,6 @@ exports.Fetch = async (model, query) => {
 
 exports.FetchPaginated = async (model, query) => {
     try {
-        console.log(query);
         const orders = await model
                     .find()
                     .skip(query.from)
@@ -28,6 +27,20 @@ exports.FetchById = async (model, _id) => {
     try {
         return await model.findOne({'_id': new mongoose.Types.ObjectId(_id)})
     } catch (error) {
+        throw error;
+    }
+}
+
+exports.UpdateOne = async(model, _id, query) => {
+    try {
+        const resp =  await model.findByIdAndUpdate(
+            _id,
+            { $set: query },
+            { new: true, runValidators: true } 
+        );
+        return resp;
+    } catch (error) {
+        console.log('error: ', error)
         throw error;
     }
 }

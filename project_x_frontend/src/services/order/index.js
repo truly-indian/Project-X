@@ -38,3 +38,22 @@ exports.fetchOrderById = async (_id) => {
         throw error;
     }
 }
+
+exports.updateOrder = async (_id, request) => {
+    try {
+        return await fetch(
+            `${url}/api/v1/orders/${_id}`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(request)
+            }
+        ).then(validateResponse)
+            .then(resp => resp)
+            .catch(err => { throw err });
+    } catch (error) {
+        throw error;
+    }
+}

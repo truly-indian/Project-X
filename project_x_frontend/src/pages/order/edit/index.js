@@ -1,6 +1,6 @@
 "use client";
 import React, {useEffect} from "react";
-import OrderView from "@/components/order/view";
+import OrderEdit from "@/components/order/edit";
 import RootLayout from "@/app/layout";
 import { useSearchParams } from 'next/navigation'
 
@@ -9,7 +9,7 @@ const OrderPage = () => {
 
     return (
         <RootLayout>
-            <OrderView orderId={searchParams.get('order_id')}></OrderView>
+            <OrderEdit orderId={searchParams.get('order_id')}></OrderEdit>
         </RootLayout>
     );
 };

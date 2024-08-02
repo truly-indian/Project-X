@@ -1,4 +1,4 @@
-const { Fetch, FetchPaginated, FetchById } = require('../repository/index');
+const { FetchPaginated, FetchById, UpdateOne } = require('../repository/index');
 const Order = require('../models/Order/Order');
 
 exports.FetchOrders = async (from, limit) => {
@@ -16,3 +16,11 @@ exports.FetchOrderById = async (orderId) => {
         throw error;
     }
 };
+
+exports.UpdateOne = async (_id, updateQuery) => {
+    try {
+        return await UpdateOne(Order, _id, updateQuery);
+    } catch (error) {
+        throw error; 
+    }
+}

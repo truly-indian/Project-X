@@ -1,11 +1,10 @@
 const app = require('express').Router();
 const responseHandler = require('../utils/responseHandler');
-const { FetchOrders, FetchOrderById } = require('./handler');
+const { FetchOrders, FetchOrderById, UpdateOne } = require('./handler');
 
 app.get('/', async (req, res) => {
     try {
         const params = req.query;
-        console.log('params: ', params);
         const resp =  await FetchOrders(params);
         responseHandler.successResponse(res, {
             statusCode: 200,
@@ -41,6 +40,28 @@ app.get('/:_id', async (req, res) => {
     }
 });
 
-
+app.patch('/:_id', async (req, res) => {
+    try {
+        const params = req.params;
+        const body = req.body;
+        const request = {
+            params, 
+            body
+        }
+        const resp =  await UpdateOne(request);
+        responseHandler.successResponse(res, {
+            statusCode: 200,
+            data: resp,
+            message: 'Success'
+        });
+    } catch (error) {
+        console.log('error while fetching orders: ', error);
+        responseHandler.errorResponse(res, {
+            statusCode: error?.statusCode || 500,
+            data: error?.data || error,
+            message: 'Failed'
+        });
+    }
+});
 
 module.exports = app; 

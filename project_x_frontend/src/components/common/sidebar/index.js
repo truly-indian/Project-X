@@ -1,4 +1,3 @@
-
 "use client";
 import React from "react";
 import Cookies from "js-cookie";
@@ -13,15 +12,13 @@ import {
   Card,
 } from "@material-tailwind/react";
 import {
-  ShoppingBagIcon,
   UserCircleIcon,
   InboxIcon,
   PowerIcon,
+  TruckIcon
 } from "@heroicons/react/24/solid";
 
-
 const SideBar = () => {
-
   const router = useRouter();
 
   const onSignOut = () => {
@@ -29,47 +26,46 @@ const SideBar = () => {
     router.push('/');
   };
 
-  const goToOrdersPage = () => {
-    router.push('/order/list')
-  };
+  const menuItems = [
+    {
+      label: "Profile",
+      icon: UserCircleIcon,
+      onClick: () => router.push('/home'),
+    },
+    {
+      label: "Orders",
+      icon: TruckIcon,
+      onClick: () => router.push('/order/list'),
+    }
+  ];
 
   return (
-    <div>
-      <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
+    <div className="flex flex-col h-screen">
+      <Card className="flex-grow w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
         <div className="mb-2 p-4">
           <Typography variant="h5" color="blue-gray">
             Welcome
           </Typography>
         </div>
         <List>
-          <ListItem>
-            <ListItemPrefix>
-              <ShoppingBagIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            Profile
-          </ListItem>
-          <ListItem>
-            <ListItemPrefix>
-              <InboxIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            Inbox
-            <ListItemSuffix>
-              <Chip value="14" size="sm" variant="ghost" color="blue-gray" className="rounded-full" />
-            </ListItemSuffix>
-          </ListItem>
-          <ListItem onClick={goToOrdersPage}>
-            <ListItemPrefix>
-              <UserCircleIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            Orders
-          </ListItem>
-          <ListItem onClick={onSignOut}>
-            <ListItemPrefix>
-              <PowerIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            Log Out
-          </ListItem>
+          {menuItems.map((item, index) => (
+            <ListItem key={index} onClick={item.onClick}>
+              <ListItemPrefix>
+                <item.icon className="h-5 w-5" />
+              </ListItemPrefix>
+              {item.label}
+              {item.suffix && <ListItemSuffix>{item.suffix}</ListItemSuffix>}
+            </ListItem>
+          ))}
         </List>
+      </Card>
+      <Card className="w-full max-w-[20rem] p-4 mt-auto shadow-xl shadow-blue-gray-900/5">
+        <ListItem onClick={onSignOut}>
+          <ListItemPrefix>
+            <PowerIcon className="h-5 w-5" />
+          </ListItemPrefix>
+          Log Out
+        </ListItem>
       </Card>
     </div>
   );

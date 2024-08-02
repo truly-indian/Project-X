@@ -1,4 +1,4 @@
-const { FetchOrders, FetchOrderById } = require('./repository');
+const { FetchOrders, FetchOrderById, UpdateOne } = require('./repository');
 
 exports.FetchOrders = async (params) => {
     try {
@@ -23,3 +23,17 @@ exports.FetchOrderById = async (params) => {
     }
 };
 
+exports.UpdateOne = async (_id, updateBody) => {
+    try {
+        const order = await UpdateOne(_id, updateBody); 
+        const quotes = order?.quotes || []; 
+        const quotePrice = quotes.reduce((min, current) => {
+            return current.quotePrice < min ? current.quotePrice : min;
+        }, Infinity);
+        const resp = await UpdateOne(_id, {'quotedPrice': quotePrice});
+        return resp;
+    } catch (error) {
+        console.log('error while updating order: ', error);
+        throw error;
+    }
+}

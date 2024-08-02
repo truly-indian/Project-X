@@ -10,12 +10,8 @@ const OrderList = () => {
     const router = useRouter();
     const tableHeads = ['Shipment Name', 'Pickup', 'Drop', 'Distance In Kms', 'Quoted Price' , 'Options'];
 
-    const quotePricePage = () => {
-        console.log('you clicked on quote price');
-    }
-
     const goToOrderViewPage = (orderId) => {
-        router.push(`/order/view?order_id=${orderId}`);
+        router.push(`/order/edit?order_id=${orderId}`);
     }
 
     const formatOrderList = (ordersList) => {
@@ -42,9 +38,11 @@ const OrderList = () => {
             setOrders(formattedOrders);
             let totalPageCounter;
             const totalOrders = ordersList?.data?.total;
-            if (totalOrders / limit != 0) {
+            if (totalOrders % limit != 0) {
                 totalPageCounter = Math.floor((totalOrders / limit) + 1);
-            } else totalPageCounter = (totalOrders / limit)
+            } else {
+                totalPageCounter = (totalOrders / limit)
+            }
             setTotalPage(totalPageCounter);
 
         } catch (error) {
@@ -53,11 +51,11 @@ const OrderList = () => {
     };
 
     useEffect(() => {
-        fetchOrdersWrapper({ from: 0, limit: 4, newPage: 0 })
+        fetchOrdersWrapper({ from: 0, limit: 10, newPage: 0 })
     }, []);
     const from = 0;
-    const limit = 4;
-    const pagination = { rowsPerPage: 4, from };
+    const limit = 10;
+    const pagination = { rowsPerPage: 10, from };
     const meta = {
         limit,
         pagination,
