@@ -2,7 +2,10 @@ import React from "react";
 import { Card, Typography } from "@material-tailwind/react";
 import Pagination from "../Pagination";
 
-const Table = ({ tableHeads, tableRows, totalCount, currentPage, triggerOnpageChange }) => {
+const Table = ({ meta, tableHeads, tableRows, totalCount, currentPage, triggerOnpageChange }) => {
+
+    const {showPagination = true} = meta
+
     return (
         <Card className="h-full w-full overflow-scroll">
             <table className="w-full min-w-max table-auto text-left">
@@ -16,7 +19,7 @@ const Table = ({ tableHeads, tableRows, totalCount, currentPage, triggerOnpageCh
                                 <Typography
                                     variant="small"
                                     color="blue-gray"
-                                    className="font-normal leading-none opacity-70"
+                                    className="font-normal leading-none opacity-70 text-center"
                                 >
                                     {head}
                                 </Typography>
@@ -27,7 +30,7 @@ const Table = ({ tableHeads, tableRows, totalCount, currentPage, triggerOnpageCh
                 <tbody>
                     {tableRows.map((row, rowIndex) => {
                         const isLast = rowIndex === tableRows.length - 1;
-                        const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+                        const classes = isLast ? "p-4 text-center" : "p-4 border-b border-blue-gray-50 text-center";
 
                         return (
                             <tr key={rowIndex}>
@@ -38,29 +41,26 @@ const Table = ({ tableHeads, tableRows, totalCount, currentPage, triggerOnpageCh
                                             color="blue-gray"
                                             className="font-normal"
                                         >
-                                            {cell}
+                                            {Array.isArray(cell) ? (
+                                                cell.map((item, index) => (
+                                                    <span key={index} className={index < cell.length - 1 ? "mr-2" : ""}>
+                                                        {item}
+                                                    </span>
+                                                ))
+                                            ) : (
+                                                cell
+                                            )}
                                         </Typography>
                                     </td>
                                 ))}
-                                {/* <td className={classes}>
-                                    <Typography
-                                        as="a"
-                                        href="#"
-                                        variant="small"
-                                        color="blue-gray"
-                                        className="font-medium"
-                                    >
-                                        Edit
-                                    </Typography>
-                                </td> */}
                             </tr>
                         );
                     })}
                 </tbody>
             </table>
-            <div className="flex justify-end">
-                <Pagination></Pagination>
-            </div>
+            {showPagination ? <div className="flex justify-end">
+                <Pagination meta={meta} totalCount={totalCount}></Pagination>
+            </div> : null}
         </Card>
     );
 

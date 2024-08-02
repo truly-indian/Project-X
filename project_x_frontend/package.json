@@ -16,6 +16,7 @@
     "@heroicons/react": "^2.1.5",
     "@material-tailwind/react": "2.0.5",
     "@mui/icons-material": "^5.16.5",
+    "@react-google-maps/api": "^2.19.3",
     "clear": "^0.1.0",
     "flowbite-react": "^0.10.1",
     "js-cookie": "^3.0.5",
