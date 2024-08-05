@@ -8,14 +8,13 @@ import {
   ListItem,
   ListItemPrefix,
   ListItemSuffix,
-  Chip,
   Card,
 } from "@material-tailwind/react";
 import {
   UserCircleIcon,
-  InboxIcon,
   PowerIcon,
-  TruckIcon
+  TruckIcon,
+  CurrencyRupeeIcon
 } from "@heroicons/react/24/solid";
 
 const SideBar = () => {
@@ -36,6 +35,11 @@ const SideBar = () => {
       label: "Orders",
       icon: TruckIcon,
       onClick: () => router.push('/order/list'),
+    },
+    {
+      label: 'Quotes',
+      icon: CurrencyRupeeIcon,
+      onClick: () => router.push('/quote/list')
     }
   ];
 

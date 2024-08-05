@@ -1,8 +1,8 @@
 const { FetchOrders, FetchOrderById, UpdateOne } = require('./service');
 
-exports.FetchOrders = async (params) => {
+exports.FetchOrders = async (params, body) => {
     try {
-        return await FetchOrders(params);
+        return await FetchOrders(params, body);
     } catch (error) {
         throw error;
     }
@@ -18,9 +18,10 @@ exports.FetchOrderById = async (params) => {
 
 exports.UpdateOne = async (request) => {
     try {
-        const _id = request.params['_id'];
+        const orderId = request.params['_id'];
         const updateBody = request.body;
-        return await UpdateOne(_id, updateBody);
+        const user = request.user;
+        return await UpdateOne(orderId, updateBody, user);
     } catch (error) {
         throw error;
     }

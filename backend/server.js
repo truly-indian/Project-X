@@ -1,13 +1,15 @@
 const express = require('express');
 const app = express();
-const authRoutes = require('./auth/routes');
-const orderRoutes = require('./orders/routes');
 const mongoose = require('mongoose');
 const cors = require('cors')
 const configs = require('./config/config');
 const config = require('./config/config');
 const responseHandler = require('./utils/responseHandler');
 
+
+const authRoutes = require('./auth/routes');
+const orderRoutes = require('./orders/routes');
+const quoteRoutes = require('./quotes/routes');
 
 mongoose.connect(configs.mongo.mongoURL)
 .then(resp => {console.log('mongo connected success: ')})
@@ -44,6 +46,7 @@ app.get('/config', (req, res) => {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/configs', orderRoutes);
+app.use('/api/v1/quotes', quoteRoutes);
 
 
 const PORT = process.env.PORT || '8080';

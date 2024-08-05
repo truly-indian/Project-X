@@ -1,17 +1,24 @@
 import { environment } from "@/environments";
 import { validateResponse } from "@/network/fetch";
+import Cookies from "js-cookie";
 
 const url = environment.server;
 
-exports.fetchOrders = async (from, limit=-1) => {
+const getUserToken = () => {
+    const userToken = Cookies.get('userToken');
+    return userToken;
+};
+
+exports.fetchOrders = async (from, limit=-1, query ={}) => {
     try {
         return await fetch(
             `${url}/api/v1/orders?from=${from}&limit=${limit}`,
             {
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify(query)
             }
         ).then(validateResponse)
             .then(resp => resp)
@@ -39,14 +46,15 @@ exports.fetchOrderById = async (_id) => {
     }
 }
 
-exports.updateOrder = async (_id, request) => {
+exports.updateOrderQuote = async (_id, request) => {
     try {
         return await fetch(
             `${url}/api/v1/orders/${_id}`,
             {
                 method: 'PATCH',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'user-token': getUserToken()
                 },
                 body: JSON.stringify(request)
             }

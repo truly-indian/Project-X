@@ -3,6 +3,7 @@ const { SignIn, SignUp } = require('./handler');
 const responseHandler = require('../utils/responseHandler');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
+const User = require('../models/User/User');
 
 router.use(cookieParser());
 
@@ -28,7 +29,7 @@ router.post('/sign_in', async (req,res) => {
     try {
         const body = req.body;
         const resp = await SignIn(body);
-        const token = jwt.sign({email: resp.email}, "secret_key", {expiresIn: '1h'} )
+        const token = jwt.sign({email: resp.email, _id: resp._id}, "secret_key", {expiresIn: '1h'} )
         responseHandler.successResponse(res, {
             statusCode: 200,
             data: {resp, token},

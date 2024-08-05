@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
-
+const { QuoteSchema } = require('../Quote/Quote');
 const Schema = mongoose.Schema; 
-
-const QuoteSchema = new Schema({
-   userId: { type: String },
-   quotePrice: { type: Number },
- }, { _id: false });
 
 const OrderSchema = new Schema({
    shipmentName: String,

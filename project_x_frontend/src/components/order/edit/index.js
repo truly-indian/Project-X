@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
-import { fetchOrderById, updateOrder } from '@/services/order';
+import { fetchOrderById, updateOrderQuote } from '@/services/order';
 import { fetchConfig } from '@/services/config';
 import Table from "@/components/common/Table";
 import SimpleButton from "@/components/common/Button";
 import BasicDialog from '@/components/common/Dialog';
 import Cookies from "js-cookie";
 import { GoogleEmbedUrl } from '@/constants/constants';
+import { jwtDecode } from "jwt-decode";
 
 const containerStyle = {
     display: 'flex',
@@ -33,24 +34,10 @@ const OrderEdit = ({ orderId }) => {
 
     const tableHeads = ['Shipment Name', 'Pickup', 'Drop', 'Distance In Kms', 'Quoted Price', 'Quote Price'];
 
-
-    const getUserId = () => {
-        const userInfo = Cookies.get('userInfo');
-        const info = JSON.parse(userInfo);
-        return info.email || '';
-    };
-
     const onQuotePriceSubmit = async (callbackParams) => {
         try {
-            let quotes = orderRef?.current?.quotes || [];
-            const userId = getUserId();
-            quotes = quotes.filter((quote) => quote.userId !== userId);
-            const newQuote = {
-                userId,
-                quotePrice: callbackParams?.quotePrice || 0
-            }
-            quotes.push(newQuote);
-            const result = await updateOrder(orderId, { quotes });
+            const quotePrice = callbackParams?.quotePrice || 0;
+            const result = await updateOrderQuote(orderId, { quotePrice });
             const updatedOrder = result?.data;
             setOrder(updatedOrder);
             formatOrder(updatedOrder);
