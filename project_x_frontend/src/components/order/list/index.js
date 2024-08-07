@@ -63,8 +63,10 @@ const OrderList = () => {
     }
 
     return (
-        <div style={{ padding: '1rem', margin: '100px 50px 50px 20px'}}>
-            <Table meta={meta} totalCount={totalPage} tableHeads={tableHeads} tableRows={orders || []}></Table>
+        <div className="p-4 m-4">
+            <div className="overflow-x-auto">
+                <Table meta={meta} totalCount={totalPage} tableHeads={tableHeads} tableRows={orders || []} />
+            </div>
         </div>
     );
 };
