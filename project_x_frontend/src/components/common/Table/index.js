@@ -4,10 +4,10 @@ import Pagination from "../Pagination";
 
 const Table = ({ meta, tableHeads, tableRows, totalCount, currentPage, triggerOnpageChange }) => {
 
-    const {showPagination = true} = meta
+    const { showPagination = true } = meta;
 
     return (
-        <Card className="h-full w-full overflow-scroll">
+        <Card className="h-full w-full overflow-auto">
             <table className="w-full min-w-max table-auto text-left">
                 <thead>
                     <tr>
@@ -33,7 +33,7 @@ const Table = ({ meta, tableHeads, tableRows, totalCount, currentPage, triggerOn
                         const classes = isLast ? "p-4 text-center" : "p-4 border-b border-blue-gray-50 text-center";
 
                         return (
-                            <tr key={rowIndex}>
+                            <tr key={rowIndex} className="hover:bg-blue-gray-50">
                                 {Object.values(row).map((cell, cellIndex) => (
                                     <td key={cellIndex} className={classes}>
                                         <Typography
@@ -58,12 +58,13 @@ const Table = ({ meta, tableHeads, tableRows, totalCount, currentPage, triggerOn
                     })}
                 </tbody>
             </table>
-            {showPagination ? <div className="flex justify-end">
-                <Pagination meta={meta} totalCount={totalCount}></Pagination>
-            </div> : null}
+            {showPagination && (
+                <div className="flex justify-end p-4">
+                    <Pagination meta={meta} totalCount={totalCount} />
+                </div>
+            )}
         </Card>
     );
-
 };
 
 export default Table;

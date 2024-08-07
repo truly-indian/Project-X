@@ -85,7 +85,7 @@ const QuoteList = () => {
 
     return (config?.mapsJavascriptAPIKey) ? (
         <div>
-            <div className="flex gap-5">
+            <div className="flex flex-wrap gap-5">
                 {userOrders.map(order => {
                     const src = `${GoogleEmbedUrl}${order?.pickupPoint?.lat},${order?.pickupPoint?.lng}&destination=${order?.dropPoint?.lat},${order?.dropPoint?.lng}&key=${config?.mapsJavascriptAPIKey}`;
                     return <SimpleCard price={order.price} imgSrc={src} key={order?.quoteId} cardHeading={order?.shipmentName || ''} cardText={order?.shipmentName || ''}></SimpleCard>
