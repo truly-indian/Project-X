@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import SimpleCard from "@/components/common/Card";
 import { GoogleEmbedUrl } from '@/constants/constants';
 import { fetchConfig } from '@/services/config';
+import { useRouter } from "next/navigation";
 
 
 const getUserId = () => {
@@ -18,6 +19,7 @@ const QuoteList = () => {
     const [quotes, setQuotes] = useState([]);
     const [userOrders, setUserOrders] = useState([]);
     const [config, setConfig] = useState({});
+    const router = useRouter();
 
     const fetchOrderWrapper = async () => {
         try {
@@ -28,6 +30,25 @@ const QuoteList = () => {
             console.log('error while fethcing orders: ', error);
         }
     }
+
+    const goToOrderDetailsPage = (orderId='') => {
+        console.log('redirecting to orderId: ', orderId)
+        router.push(`/order/edit?order_id=${orderId}`);
+    };
+
+    const getButtons = (quoteId, userId, orderId) => {
+        return [
+            {
+                label: 'View order Details',
+                color: 'blue',
+                onClick: () => goToOrderDetailsPage(orderId)
+            }, 
+            {
+                label: 'Bid Out',
+                color: 'red',
+            }
+    ]
+    };
 
     const formatQuotes = (quoteList, orderList) => {
         const result = [];
@@ -44,7 +65,8 @@ const QuoteList = () => {
                     drop: order.drop,
                     pickupPoint: order.pickupPoint,
                     dropPoint: order.dropPoint,
-                    price: quote.quotePrice
+                    price: quote.quotePrice,
+                    buttons: getButtons(quote._id, quote.userId, quote.orderId)
                 });
             }
         });
@@ -55,7 +77,7 @@ const QuoteList = () => {
         try {
             const user = getUserId();
             const resp = await fetchQuotes(0, 0, { 'userId': user })
-            const resp2 = await fetchOrderWrapper(0, 0, { 'quotes.userId': getUserId });
+            const resp2 = await fetchOrderWrapper(0, 0, { 'quotes.userId': user });
             const fetchedQuotes = resp?.data?.quotes;
             const fetchedOrders = resp2?.data?.orders;
             const formattedQuotesAndOrders = formatQuotes(fetchedQuotes, fetchedOrders);
@@ -88,7 +110,7 @@ const QuoteList = () => {
             <div className="flex flex-wrap gap-5">
                 {userOrders.map(order => {
                     const src = `${GoogleEmbedUrl}${order?.pickupPoint?.lat},${order?.pickupPoint?.lng}&destination=${order?.dropPoint?.lat},${order?.dropPoint?.lng}&key=${config?.mapsJavascriptAPIKey}`;
-                    return <SimpleCard price={order.price} imgSrc={src} key={order?.quoteId} cardHeading={order?.shipmentName || ''} cardText={order?.shipmentName || ''}></SimpleCard>
+                    return <SimpleCard buttons={order.buttons} price={order.price} imgSrc={src} key={order?.quoteId} cardHeading={order?.shipmentName || ''} cardText={order?.shipmentName || ''}></SimpleCard>
                 })}
             </div>
         </div>

@@ -2,24 +2,42 @@ import React, { useState } from "react";
 import {
     Card,
     Input,
-    Checkbox,
     Button,
     Typography,
 } from "@material-tailwind/react";
+import ToastMessage from "../../../../components/common/toast";
 
 const QuotePriceForm = ({ onClose, meta = {}}) => {
 
-    const { triggerOnSubmit } = meta;
+    const { triggerOnSubmit, quotedPrice } = meta;
 
     const [quotePrice, setQuotePrice] = useState(0);
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState({});
 
     const onPriceChange = (e) => {
         const val = e.target.value; 
         setQuotePrice(val);
     };
 
+    const handleCloseToast = () => {
+        setShowToast(false);
+    };
+
     const submitQuotePrice = () => {
-        console.log('inside submit quote prie', quotePrice);
+        if (!quotedPrice) {
+            const text = 'Please refresh the page'
+            setToastMessage({ status: 'warning', text });
+            setShowToast(true);
+            return;
+        }
+        if (quotePrice >= quotedPrice || quotePrice == 0) {
+            const text = 'your quote price can not be equal or greater than the current quoted price.'
+            setToastMessage({ status: 'warning', text });
+            setShowToast(true);
+            setQuotePrice(0);
+            return; 
+        }
         triggerOnSubmit({quotePrice});
         onClose();
     };
@@ -48,6 +66,9 @@ const QuotePriceForm = ({ onClose, meta = {}}) => {
                     Submit
                 </Button>
             </form>
+            {showToast && (
+                <ToastMessage onClose={handleCloseToast} text={toastMessage.text} status={toastMessage.status} />
+            )}
         </Card>
        </div>
     );

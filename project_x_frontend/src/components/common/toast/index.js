@@ -1,11 +1,24 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Toast } from "flowbite-react";
 import DoneIcon from '@mui/icons-material/Done';
 import SmsFailedIcon from '@mui/icons-material/SmsFailed';
 import ReportGmailerrorredIcon from '@mui/icons-material/ReportGmailerrorred';
 
-const ToastMessage = ({ text, status, onClose }) => {
+const ToastMessage = ({ text, status, onClose, duration = 3000 }) => {
+    const [isVisible, setIsVisible] = useState(true);
+
+    useEffect(() => {
+        // Automatically hide the toast after the specified duration
+        const timer = setTimeout(() => {
+            setIsVisible(false);
+            if (onClose) onClose();
+        }, duration);
+
+        // Clean up the timer on component unmount
+        return () => clearTimeout(timer);
+    }, [duration, onClose]);
+
     const getToastStyle = () => {
         switch (status) {
             case 'success':
@@ -37,6 +50,8 @@ const ToastMessage = ({ text, status, onClose }) => {
 
     const { bgColor, textColor, icon } = getToastStyle();
 
+    if (!isVisible) return null; // Do not render if not visible
+
     return (
         <div className="flex flex-col gap-4">
             <Toast>
@@ -44,7 +59,7 @@ const ToastMessage = ({ text, status, onClose }) => {
                     {icon}
                 </div>
                 <div className="ml-3 text-sm font-normal">{text}</div>
-                <Toast.Toggle onClick={onClose} />
+                <Toast.Toggle onClick={() => setIsVisible(false)} />
             </Toast>
         </div>
     );

@@ -4,16 +4,29 @@ import { fetchConfig } from '@/services/config';
 import Table from "@/components/common/Table";
 import SimpleButton from "@/components/common/Button";
 import BasicDialog from '@/components/common/Dialog';
-import Cookies from "js-cookie";
 import { GoogleEmbedUrl } from '@/constants/constants';
-import { jwtDecode } from "jwt-decode";
+import SimpleSpinner from "@/components/common/Spinner";
+import { useRouter } from "next/navigation";
 
 const containerStyle = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     height: '70vh',
-    marginTop: '10rem'
+    marginTop: '7rem'
+};
+
+const spinnerContainerStyle = {
+    position: 'fixed', // Make the spinner container cover the entire viewport
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999, // Ensure it appears above other content
+    backgroundColor: 'rgba(255, 255, 255, 0.5)' // O
 };
 
 const mapStyle = {
@@ -28,22 +41,33 @@ const OrderEdit = ({ orderId }) => {
     const [config, setConfig] = useState({});
     const [showDialog, setShowDialog] = useState(false);
     const [dialogInfo, setDialogInfo] = useState({});
+    const [showSpinner, setShowSpinner] = useState(false);
     const orderRef = useRef();
+    const router = useRouter();
 
     const src = `${GoogleEmbedUrl}${order?.pickupPoint?.lat},${order?.pickupPoint?.lng}&destination=${order?.dropPoint?.lat},${order?.dropPoint?.lng}&key=${config?.mapsJavascriptAPIKey}`;
 
     const tableHeads = ['Shipment Name', 'Pickup', 'Drop', 'Distance In Kms', 'Quoted Price', 'Quote Price'];
 
+    const RouteToPage = (path, timeout=2000) => {
+        setTimeout(() => {
+            router.push(path);
+            setShowSpinner(false);
+        }, timeout);
+    }
+
     const onQuotePriceSubmit = async (callbackParams) => {
         try {
+            setShowSpinner(true);
             const quotePrice = callbackParams?.quotePrice || 0;
             const result = await updateOrderQuote(orderId, { quotePrice });
             const updatedOrder = result?.data;
             setOrder(updatedOrder);
             formatOrder(updatedOrder);
             orderRef.current = updatedOrder.data;
-
+            RouteToPage('/quote/list');
         } catch (error) {
+            setShowSpinner(false);
             console.log('error while updating order with quote price: ', error);
         }
     };
@@ -53,6 +77,7 @@ const OrderEdit = ({ orderId }) => {
             type: 'quote_price_form',
             triggerCloseDialog: setShowDialog,
             meta: {
+                quotedPrice: orderRef?.current?.quotedPrice,
                 triggerOnSubmit: onQuotePriceSubmit
             }
         }
@@ -106,9 +131,10 @@ const OrderEdit = ({ orderId }) => {
 
     return (config?.mapsJavascriptAPIKey) ? (
         <div>
-            <div className="flex">
+            <div className="flex justify-center">
                 <Table meta={meta} tableHeads={tableHeads} tableRows={formattedOrder || []}></Table>
             </div>
+            {showSpinner ? <div style={spinnerContainerStyle}><SimpleSpinner></SimpleSpinner> </div> : null}
             <div style={containerStyle}>
                 <iframe
                     style={mapStyle}

@@ -8,7 +8,7 @@ import {
     Button,
 } from "@material-tailwind/react";
 
-const SimpleCard = ({ cardText, cardHeading, imgSrc, price }) => {
+const SimpleCard = ({ cardText, cardHeading, imgSrc, price, buttons }) => {
     return (
         <Card className="mt-6 w-96">
             <CardHeader color="blue-gray" className="relative h-56">
@@ -29,11 +29,19 @@ const SimpleCard = ({ cardText, cardHeading, imgSrc, price }) => {
                     My Quote: ₹ {price}
                 </Typography>
             </CardBody>
-            <CardFooter className="pt-0">
-                <Button>view order details</Button>
+            <CardFooter className="flex gap-2 bg-blue-gray-50">
+                {buttons.map((button, index) => (
+                    <Button
+                        key={index}
+                        color={button.color || "blue"}
+                        onClick={button.onClick}
+                    >
+                        {button.label}
+                    </Button>
+                ))}
             </CardFooter>
         </Card>
     );
 }
 
-export default SimpleCard; 
+export default SimpleCard;  
