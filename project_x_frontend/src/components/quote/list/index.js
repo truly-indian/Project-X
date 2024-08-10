@@ -7,6 +7,20 @@ import SimpleCard from "@/components/common/Card";
 import { GoogleEmbedUrl } from '@/constants/constants';
 import { fetchConfig } from '@/services/config';
 import { useRouter } from "next/navigation";
+import SimpleSpinner from "@/components/common/Spinner";
+
+const spinnerContainerStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 9999,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)'
+};
 
 
 const getUserId = () => {
@@ -19,6 +33,7 @@ const QuoteList = () => {
     const [quotes, setQuotes] = useState([]);
     const [userOrders, setUserOrders] = useState([]);
     const [config, setConfig] = useState({});
+    const [showSpinner, setShowSpinner] = useState(false);
     const router = useRouter();
 
     const fetchOrderWrapper = async () => {
@@ -75,6 +90,7 @@ const QuoteList = () => {
 
     const fetchQuotesWrapper = async () => {
         try {
+            setShowSpinner(true);
             const user = getUserId();
             const resp = await fetchQuotes(0, 0, { 'userId': user })
             const resp2 = await fetchOrderWrapper(0, 0, { 'quotes.userId': user });
@@ -82,8 +98,9 @@ const QuoteList = () => {
             const fetchedOrders = resp2?.data?.orders;
             const formattedQuotesAndOrders = formatQuotes(fetchedQuotes, fetchedOrders);
             setUserOrders(formattedQuotesAndOrders);
-            console.log(formattedQuotesAndOrders)
+            setShowSpinner(false);
         } catch (error) {
+            setShowSpinner(false);
             console.log('error fetching quotes: ', error);
         }
     }
@@ -113,6 +130,7 @@ const QuoteList = () => {
                     return <SimpleCard buttons={order.buttons} price={order.price} imgSrc={src} key={order?.quoteId} cardHeading={order?.shipmentName || ''} cardText={order?.shipmentName || ''}></SimpleCard>
                 })}
             </div>
+            {showSpinner ? <div style={spinnerContainerStyle} > <SimpleSpinner/> </div>: null}
         </div>
     ): null;
 }
