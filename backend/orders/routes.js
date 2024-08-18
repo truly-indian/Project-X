@@ -42,18 +42,17 @@ app.get('/:_id', async (req, res) => {
     }
 });
 
-app.patch('/:_id', async (req, res) => {
+app.put('/:_id', async (req, res) => {
     try {
         const params = req.params;
         const body = req.body;
         const userToken = req.headers['user-token'];
         const user = jwt.decode(userToken);
-        const request = {
-            params, 
-            body,
-            user
-        }
-        const resp =  await UpdateOne(request);
+        const meta = {
+            userId: user._id, 
+            orderId: params["_id"]
+        };
+        const resp =  await UpdateOne(meta, body);
         responseHandler.successResponse(res, {
             statusCode: 200,
             data: resp,

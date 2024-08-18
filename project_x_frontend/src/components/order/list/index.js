@@ -33,7 +33,7 @@ const OrderList = () => {
     }
 
     const goToOrderViewPage = (orderId) => {
-        setShowSpinner(true);
+       setShowSpinner(true);
        RouteToPage(`/order/edit?order_id=${orderId}`);
     }
 

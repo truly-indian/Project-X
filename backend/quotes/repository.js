@@ -1,5 +1,6 @@
 const {Quote} = require('../models/Quote/Quote');
-const { Fetch, Insert, FindByIdAndUpdate, FetchPaginated } = require('../repository/index');
+const  Order  = require('../models/Order/Order');
+const { Fetch, Insert, FindByIdAndUpdate, FetchPaginated, FindByIdAndReplace, FetchById } = require('../repository/index');
 const {GetObjectIdFromString} = require('../utils/utils');
 
 exports.FetchQuoteByUserIdAndOrderId = async (userId, orderId) => {
@@ -31,13 +32,9 @@ exports.FetchByIdAndUpdate = async (userId, orderId, updateBody) => {
     }
 }
 
-exports.InsertQuote = async (userId, orderId, price) => {
+exports.InsertQuote = async (quote) => {
     try {
-        const newQuote = new Quote({
-            userId: GetObjectIdFromString(userId),
-            orderId: GetObjectIdFromString(orderId),
-            quotePrice: price
-        });
+        const newQuote = new Quote(quote);
         return await Insert(newQuote);
     } catch (error) {
         throw error; 
@@ -52,3 +49,28 @@ exports.FetchQuotes = async (from, limit = 0, query = {}) => {
         throw error; 
     }
 }
+
+exports.UpdateQuote = async (quoteId, updateBody) => {
+    try {
+        const query = {
+            $set: {
+                ...updateBody
+            }
+        }
+
+        const findQuery = {
+            '_id': GetObjectIdFromString(quoteId)
+        }
+        return await FindByIdAndUpdate(Quote, findQuery, query)
+    } catch (error) {
+        throw error;
+    }
+}
+
+exports.FetchOrderById = async (orderId) => {
+    try {
+        return await FetchById(Order, orderId);
+    } catch (error) {
+        throw error;
+    }
+};

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { fetchQuotes } from '@/services/quote/index';
-import { fetchOrders } from '@/services/order/index';
+import React, { useEffect, useState, useRef } from "react";
+import { fetchQuotes, updateQuote } from '@/services/quote/index';
+import { fetchOrders, updateOrder } from '@/services/order/index';
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import SimpleCard from "@/components/common/Card";
@@ -35,6 +35,15 @@ const QuoteList = () => {
     const [config, setConfig] = useState({});
     const [showSpinner, setShowSpinner] = useState(false);
     const router = useRouter();
+    const quoteRef = useRef();
+    const orderRef = useRef();
+
+    const RouteToPage = (path, timeout=2000) => {
+        setTimeout(() => {
+            router.push(path);
+            setShowSpinner(false);
+        }, timeout);
+    }
 
     const fetchOrderWrapper = async () => {
         try {
@@ -46,9 +55,36 @@ const QuoteList = () => {
         }
     }
 
-    const goToOrderDetailsPage = (orderId='') => {
-        console.log('redirecting to orderId: ', orderId)
-        router.push(`/order/edit?order_id=${orderId}`);
+    const goToOrderDetailsPage = (orderId = '') => {
+        setShowSpinner(true);
+        RouteToPage(`/order/edit?order_id=${orderId}`);
+    };
+
+    const performBidOut = async (quoteId) => {
+        try {
+            const quote = quoteRef.current.find(quote => quote._id == quoteId);
+            quote.status = 'out';
+            quote.statuses.push('out');
+            await updateQuote(quote._id, quote);
+            const order = orderRef.current.find((order) => order._id == quote.orderId);
+            let minQuote = Infinity;
+            for(let i=0; i < order.quotes.length; i++) {
+                if (getUserId() != order.quotes[i].userId && order.quotes[i].quotePrice < minQuote) {
+                    minQuote = order.quotes[i].quotePrice;
+                } else if (getUserId() == order.quotes[i].userId) {
+                    order.quotes[i].status = 'out';
+                    order.quotes[i].statuses.push('out');
+                }
+            }
+            const orderUpdateReq = {
+                ...order,
+                quotedPrice: minQuote,
+            }
+            await updateOrder(quote.orderId, orderUpdateReq);
+            await fetchQuotesWrapper();
+        } catch (error) {
+            console.log('error while updating quote: ', error);
+        }
     };
 
     const getButtons = (quoteId, userId, orderId) => {
@@ -57,16 +93,18 @@ const QuoteList = () => {
                 label: 'View order Details',
                 color: 'blue',
                 onClick: () => goToOrderDetailsPage(orderId)
-            }, 
+            },
             {
                 label: 'Bid Out',
                 color: 'red',
+                onClick: () => performBidOut(quoteId)
             }
-    ]
+        ]
     };
 
     const formatQuotes = (quoteList, orderList) => {
         const result = [];
+        quoteList = quoteList.filter((quote) => quote.status == 'active');
         quoteList.forEach(quote => {
             const order = orderList.find(o => {
                 return o._id == quote.orderId
@@ -98,6 +136,9 @@ const QuoteList = () => {
             const fetchedOrders = resp2?.data?.orders;
             const formattedQuotesAndOrders = formatQuotes(fetchedQuotes, fetchedOrders);
             setUserOrders(formattedQuotesAndOrders);
+            setQuotes(fetchedQuotes);
+            quoteRef.current = fetchedQuotes;
+            orderRef.current = fetchedOrders; 
             setShowSpinner(false);
         } catch (error) {
             setShowSpinner(false);
@@ -130,9 +171,9 @@ const QuoteList = () => {
                     return <SimpleCard buttons={order.buttons} price={order.price} imgSrc={src} key={order?.quoteId} cardHeading={order?.shipmentName || ''} cardText={order?.shipmentName || ''}></SimpleCard>
                 })}
             </div>
-            {showSpinner ? <div style={spinnerContainerStyle} > <SimpleSpinner/> </div>: null}
+            {showSpinner ? <div style={spinnerContainerStyle} > <SimpleSpinner /> </div> : null}
         </div>
-    ): null;
+    ) : null;
 }
 
 export default QuoteList;

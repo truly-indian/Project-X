@@ -27,3 +27,43 @@ exports.fetchQuotes = async (from, limit = -1, query) => {
         throw error;
     }
 }
+
+exports.updateQuote = async (_id, requestBody) => {
+    try {
+        return await fetch(
+            `${url}/api/v1/quotes/${_id}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'user-token': getUserToken()
+                },
+                body: JSON.stringify(requestBody)
+            }
+        ).then(validateResponse)
+            .then(resp => resp)
+            .catch(err => { throw err });
+    } catch (error) {
+        throw error;
+    }
+}
+
+exports.postQuote = async (requestBody) => {
+    try {
+        return await fetch(
+            `${url}/api/v1/quotes/submit_quote`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'user-token': getUserToken()
+                },
+                body: JSON.stringify(requestBody)
+            }
+        ).then(validateResponse)
+            .then(resp => resp)
+            .catch(err => { throw err });
+    } catch (error) {
+        throw error;
+    }
+}

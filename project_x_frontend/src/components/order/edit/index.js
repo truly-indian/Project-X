@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import { fetchOrderById, updateOrderQuote } from '@/services/order';
+import { fetchOrderById, updateOrder } from '@/services/order';
+import { postQuote, fetchQuotes, updateQuote } from '@/services/quote';
 import { fetchConfig } from '@/services/config';
 import Table from "@/components/common/Table";
 import SimpleButton from "@/components/common/Button";
@@ -7,6 +8,8 @@ import BasicDialog from '@/components/common/Dialog';
 import { GoogleEmbedUrl } from '@/constants/constants';
 import SimpleSpinner from "@/components/common/Spinner";
 import { useRouter } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 const containerStyle = {
     display: 'flex',
@@ -45,6 +48,12 @@ const OrderEdit = ({ orderId }) => {
     const orderRef = useRef();
     const router = useRouter();
 
+    const getUserId = () => {
+        const userToken = Cookies.get('userToken');
+        const decodedToken = jwtDecode(userToken);
+        return decodedToken._id;
+    };
+
     const src = `${GoogleEmbedUrl}${order?.pickupPoint?.lat},${order?.pickupPoint?.lng}&destination=${order?.dropPoint?.lat},${order?.dropPoint?.lng}&key=${config?.mapsJavascriptAPIKey}`;
 
     const tableHeads = ['Shipment Name', 'Pickup', 'Drop', 'Distance In Kms', 'Quoted Price', 'Quote Price'];
@@ -60,8 +69,47 @@ const OrderEdit = ({ orderId }) => {
         try {
             setShowSpinner(true);
             const quotePrice = callbackParams?.quotePrice || 0;
-            const result = await updateOrderQuote(orderId, { quotePrice });
-            const updatedOrder = result?.data;
+            const userQuote = await fetchQuotes(0,0,{'userId': getUserId(), 'orderId': orderId});
+            let quote = userQuote?.data?.quotes[0] || null;
+            if (!quote) {
+                const requestBody = {
+                    orderId,
+                    quotePrice,
+                    status: 'active',
+                    statuses: ['active']
+                }
+                const resp = await postQuote(requestBody)
+                quote = resp?.data;
+            } else {
+                const updateQuoteBody = {
+                    ...quote,
+                    quotePrice,
+                }
+                const resp = await updateQuote(userQuote?.data?.quotes?.[0]._id, updateQuoteBody)
+                quote = resp?.data;
+            }
+            const quotes = orderRef.current.quotes || []; 
+            let userFound = false;
+            for (let i = 0; i < quotes.length; i++) {
+                if (quotes[i].userId == getUserId()) {
+                    quotes[i].quotePrice = quotePrice;
+                    userFound = true; 
+                    break;
+                }
+            }
+
+            if (!userFound) {
+                quotes.push(quote);
+            }
+
+            const orderUpdateReq = {
+                ...orderRef.current,
+                quotedPrice: quotePrice,
+                quotes: [...quotes]
+            }
+            const resp = await updateOrder(orderId, orderUpdateReq);
+            const updatedOrder = resp?.data;
+            console.log('updatedOrder: ', updatedOrder);
             setOrder(updatedOrder);
             formatOrder(updatedOrder);
             orderRef.current = updatedOrder.data;

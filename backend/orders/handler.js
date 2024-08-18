@@ -16,12 +16,10 @@ exports.FetchOrderById = async (params) => {
     }
 }
 
-exports.UpdateOne = async (request) => {
+exports.UpdateOne = async (meta, requestBody) => {
     try {
-        const orderId = request.params['_id'];
-        const updateBody = request.body;
-        const user = request.user;
-        return await UpdateOne(orderId, updateBody, user);
+        const { orderId, userId } = meta; 
+        return await UpdateOne(orderId, requestBody, userId);
     } catch (error) {
         throw error;
     }

@@ -46,12 +46,12 @@ exports.fetchOrderById = async (_id) => {
     }
 }
 
-exports.updateOrderQuote = async (_id, request) => {
+exports.updateOrder = async (_id, request) => {
     try {
         return await fetch(
             `${url}/api/v1/orders/${_id}`,
             {
-                method: 'PATCH',
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'user-token': getUserToken()

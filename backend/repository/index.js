@@ -46,6 +46,7 @@ exports.UpdateOne = async(model, _id, query) => {
 
 exports.Insert = async (model) => {
     try {
+        console.log('model before save: ', model)
         return await model.save();
     } catch (error) {
         throw error; 
@@ -54,9 +55,19 @@ exports.Insert = async (model) => {
 
 exports.FindByIdAndUpdate = async (model, findQuery, query) => {
     try {
-        return await model.findOneAndUpdate(findQuery, query,{ new: true, upsert: false })
+        const resp =  await model.findOneAndUpdate(findQuery, query,{ new: true, upsert: false })
+        return resp;
     } catch (error) {
-        console.log('error: ',error);
         throw error;
     }
 };
+
+exports.FindByIdAndReplace = async (model, findQuery, query) => {
+    try {
+        console.log('find query: ', findQuery);
+        console.log('query: ', query);
+        return await model.findOneAndUpdate(findQuery, query, {new: true, upsert: false});
+    } catch (error) {
+        throw error;
+    }
+}
