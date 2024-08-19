@@ -1,4 +1,4 @@
-const { SignIn, SignUp } = require('./service');
+const { SignIn, SignUp, UpdateUserProfile } = require('./service');
 
 exports.SignIn = async (request) => {
     try {
@@ -15,5 +15,14 @@ exports.SignUp = async (request) => {
     } catch (error) {
         console.log('[service]: error while registering user: ', error);
         throw error;
+    }
+};
+
+exports.UpdateUserProfile = async (meta, request) => {
+    try {
+        const userId = meta.userId;
+        return await UpdateUserProfile(userId, request);
+    } catch (error) {
+        throw error; 
     }
 };

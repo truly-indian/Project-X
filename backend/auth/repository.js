@@ -16,3 +16,11 @@ exports.Fetch = async (model, query) => {
         throw error;
     }
 };
+
+exports.Update = async (model, findQuery, query) => {
+    try {
+        return await model.findOneAndUpdate(findQuery, query, {new: true, upsert: false});
+    } catch (error) {
+        throw error; 
+    }
+}

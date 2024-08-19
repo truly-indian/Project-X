@@ -1,6 +1,7 @@
 const User = require('../models/User/User');
-const { Save, Fetch } = require('./repository')
+const { Save, Fetch, Update } = require('./repository')
 const bcrypt = require('bcrypt');
+const {GetObjectIdFromString} = require('../utils/utils');
 const saltRounds = 10;
 
 exports.SignIn = async (request) => {
@@ -29,3 +30,21 @@ exports.SignUp = async (request) => {
         throw error;
     }
 };
+
+exports.UpdateUserProfile = async (userId, userProfileUpdate) => {
+    try {
+        const query = {
+            $set: {
+                'userDetails': userProfileUpdate
+            }
+        }
+        
+        const findQuery = {
+            '_id': GetObjectIdFromString(userId)
+        }
+        await Update(User, findQuery, query);
+        return {message: "success updated user successfully!!"}
+    } catch (error) {
+        throw error; 
+    }
+}

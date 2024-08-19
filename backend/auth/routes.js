@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { SignIn, SignUp } = require('./handler');
+const { SignIn, SignUp, UpdateUserProfile } = require('./handler');
 const responseHandler = require('../utils/responseHandler');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
@@ -58,6 +58,30 @@ router.post('/signout', async(req, res) => {
     }
 });
 
+
+router.put('/user/update', async (req, res) => {
+    try {
+        const user = req.headers['user-token'];
+        const userId = jwt.decode(user)._id;
+        const body = req.body;
+        const meta = {
+            userId,
+        };
+        const resp = await UpdateUserProfile(meta, body);
+        responseHandler.successResponse(res, {
+            statusCode: 200,
+            data: resp,
+            message: 'Success'
+        });
+    } catch (error) {
+        console.log('error while updating user details: ', error);
+        responseHandler.errorResponse(res, {
+            statusCode: error?.statusCode || 500,
+            data: error?.data || error,
+            message: 'Failed'
+        });
+    }
+});
 
 
 
